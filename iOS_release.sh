@@ -34,7 +34,7 @@ IPANAME="${APP_NAME}_${DATE}_IPA"
 CODE_PATH="${CURRENT_DIR}/ios"
 FLUTTER_CODE_PATH=${CURRENT_DIR}
 
-echo "****************FLUTTER_CODE_PATH: ${CODE_PATH}****************"
+echo "****************CODE_PATH: ${CODE_PATH}****************"
 
 
 # 要上传的ipa文件路径 ${username} 需要换成自己的用户名
