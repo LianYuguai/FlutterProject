@@ -1,4 +1,4 @@
-package com.example.my_app02
+package com.os-easy.office
 
 import io.flutter.embedding.android.FlutterActivity
 
