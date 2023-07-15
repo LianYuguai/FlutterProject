@@ -84,7 +84,7 @@ class DioUtil {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    const _methodValues = {
+    const methodValues = {
       DioMethod.get: 'get',
       DioMethod.post: 'post',
       DioMethod.put: 'put',
@@ -92,7 +92,7 @@ class DioUtil {
       DioMethod.patch: 'patch',
       DioMethod.head: 'head'
     };
-    options ??= Options(method: _methodValues[method]);
+    options ??= Options(method: methodValues[method]);
     try {
       Response response;
       response = await _dio.request(path,
