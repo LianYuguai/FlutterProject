@@ -3,6 +3,8 @@ import './views/home.dart';
 import 'router/routers.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 

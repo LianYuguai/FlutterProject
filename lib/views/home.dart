@@ -1,4 +1,6 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app02/config/application.dart';
 import 'package:my_app02/router/routers.dart';
 import '../utils/icon.dart';
 import '../api/dio_request.dart';
@@ -25,11 +27,12 @@ class _HomeState extends State<Home> {
       color: Colors.blueGrey,
       alignment: Alignment.center,
       child: TextButton(
-        child: const Text('点击请求'),
+        child: const Text('点击定位'),
         onPressed: () {
-          developer.log('发出请求');
-          DioUtil().request('j/puppy/frodo_landing?include=anony_home',
-              method: DioMethod.get);
+          // developer.log('发出请求');
+          // DioUtil().request('j/puppy/frodo_landing?include=anony_home',
+          //     method: DioMethod.get);
+          Navigator.of(context).pushNamed('/location');
         },
       ),
     ),
@@ -46,8 +49,21 @@ class _HomeState extends State<Home> {
       ),
     ),
     Container(
-      color: Colors.yellowAccent,
-    )
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: TextButton(
+          child: const Text('点击拍照'),
+          onPressed: () async {
+            try {
+              ApplicationConfig.cameras = await availableCameras();
+            } on CameraException catch (e) {
+              _logError(e.code, e.description);
+            }
+            if (mounted) {
+              Navigator.of(context).pushNamed('/camera');
+            }
+          },
+        ))
   ];
   @override
   Widget build(BuildContext context) {
@@ -70,5 +86,10 @@ class _HomeState extends State<Home> {
             BottomNavigationBarItem(icon: Icon(IconFonts.check), label: '审核')
           ]),
     );
+  }
+
+  void _logError(String code, String? message) {
+    // ignore: avoid_print
+    print('Error: $code${message == null ? '' : '\nError Message: $message'}');
   }
 }
