@@ -66,6 +66,26 @@ class _CameraPageState extends State<CameraPage>
     super.dispose();
   }
 
+  @override
+  void didChangeMetrics() {
+    // final orientation =
+    //     WidgetsBinding.instance.window.physicalSize.aspectRatio > 1
+    //         ? Orientation.landscape
+    //         : Orientation.portrait;
+    debugPrint("didChangeMetrics ******");
+    super.didChangeMetrics();
+  }
+
+  // @override
+  // void didChangeMetrics() {
+  //   // This will be triggered by changes in orientation.
+  //   final orientation =
+  //       WidgetsBinding.instance.window.physicalSize.aspectRatio > 1
+  //           ? Orientation.landscape
+  //           : Orientation.portrait;
+  //   debugPrint("orientation: $orientation");
+  // }
+
   // #docregion AppLifecycle
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -142,19 +162,23 @@ class _CameraPageState extends State<CameraPage>
 
   Widget _charactorView() {
     return Positioned(
-        left: 0,
-        top: 0,
+        left: 16,
+        bottom: 20,
         child: RotatedBox(
           quarterTurns: 0,
-          child: Column(
-            children: const [
-              Text(
-                "111",
-                style: TextStyle(color: Colors.white),
-              ),
-              Text("222", style: TextStyle(color: Colors.white)),
-              Text("333", style: TextStyle(color: Colors.white))
-            ],
+          child: Container(
+            color: Colors.amber,
+            child: Column(
+              // mainAxisSize: MainAxisSize.min,
+              children: const [
+                Text(
+                  "111",
+                  style: TextStyle(color: Colors.white),
+                ),
+                Text("222", style: TextStyle(color: Colors.white)),
+                Text("333", style: TextStyle(color: Colors.white))
+              ],
+            ),
           ),
         ));
   }
