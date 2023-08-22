@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:my_app02/config/application.dart';
 import 'package:my_app02/util/save_album_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,16 +55,23 @@ class _CameraPageState extends State<CameraPage>
 
   final List<CameraDescription> _cameras = ApplicationConfig.cameras;
 
+  final EventChannel _channel =
+      const EventChannel("com.oseasy.emp_mobile/event_channel");
+  StreamSubscription? _streamSubscription;
+  int _orientation = 0;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initializeCameraController(_cameras[0]);
+    _enableEventReceiver();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _disableEventReceiver();
     super.dispose();
   }
 
@@ -75,16 +84,6 @@ class _CameraPageState extends State<CameraPage>
     debugPrint("didChangeMetrics ******");
     super.didChangeMetrics();
   }
-
-  // @override
-  // void didChangeMetrics() {
-  //   // This will be triggered by changes in orientation.
-  //   final orientation =
-  //       WidgetsBinding.instance.window.physicalSize.aspectRatio > 1
-  //           ? Orientation.landscape
-  //           : Orientation.portrait;
-  //   debugPrint("orientation: $orientation");
-  // }
 
   // #docregion AppLifecycle
   @override
@@ -103,6 +102,22 @@ class _CameraPageState extends State<CameraPage>
     }
   }
   // #enddocregion AppLifecycle
+
+  void _enableEventReceiver() {
+    _streamSubscription = _channel.receiveBroadcastStream().listen((event) {
+      debugPrint("receiveBroadcastStream: $event");
+      setState(() {
+        _orientation = event;
+      });
+    });
+  }
+
+  void _disableEventReceiver() {
+    if (_streamSubscription != null) {
+      _streamSubscription?.cancel();
+      _streamSubscription = null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
