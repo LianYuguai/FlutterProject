@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:io';
-
+import 'package:image/image.dart' as img;
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:my_app02/config/application.dart';
-import 'package:my_app02/util/save_album_util.dart';
+// import 'package:my_app02/util/save_album_util.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -177,21 +177,25 @@ class _CameraPageState extends State<CameraPage>
 
   Widget _charactorView() {
     return Positioned(
-        left: 16,
-        bottom: 20,
+        left: rotatedLeft,
+        right: rotatedRight,
+        top: rotatedTop,
+        bottom: rotatedBottom,
         child: RotatedBox(
-          quarterTurns: 0,
+          quarterTurns: quarterTurns,
           child: Container(
             color: Colors.amber,
             child: Column(
               // mainAxisSize: MainAxisSize.min,
               children: const [
                 Text(
-                  "111",
+                  "11111111111111111111111",
                   style: TextStyle(color: Colors.white),
                 ),
-                Text("222", style: TextStyle(color: Colors.white)),
-                Text("333", style: TextStyle(color: Colors.white))
+                Text("222222222222222222",
+                    style: TextStyle(color: Colors.white)),
+                Text("3333333333333333333333333333",
+                    style: TextStyle(color: Colors.white))
               ],
             ),
           ),
@@ -438,6 +442,7 @@ class _CameraPageState extends State<CameraPage>
           ?.findRenderObject() as RenderRepaintBoundary;
       ui.Image image =
           await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
+
       ByteData? byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List? imgBytes = byteData?.buffer.asUint8List();
@@ -448,11 +453,118 @@ class _CameraPageState extends State<CameraPage>
       File file =
           File('$basePath/${DateTime.now().millisecondsSinceEpoch}.jpg');
       debugPrint("file path: ${file.path}");
-      file.writeAsBytesSync(imgBytes!);
+      final originalImage = img.decodeImage(imgBytes!);
+      var newImg = img.copyRotate(originalImage!, angle: -90);
+      file.writeAsBytesSync(img.encodeJpg(newImg));
     } catch (e) {
       debugPrint("e=====$e");
     }
     controller?.resumePreview();
     // _takeStatus = TakeStatus.taking;
+  }
+
+  int get quarterTurns {
+    int value;
+    switch (_orientation) {
+      case 0:
+        value = 0;
+        break;
+      case -90:
+        value = 1;
+        break;
+      case 90:
+        value = -1;
+        break;
+      case 180:
+        value = 2;
+        break;
+      default:
+        value = 0;
+    }
+    return value;
+  }
+
+  double? get rotatedLeft {
+    double? value;
+    switch (_orientation) {
+      case 0:
+        value = 16;
+        break;
+      case -90:
+        value = 16;
+        break;
+      case 90:
+        value = null;
+        break;
+      case 180:
+        value = null;
+        break;
+      default:
+        value = null;
+    }
+    return value;
+  }
+
+  double? get rotatedRight {
+    double? value;
+    switch (_orientation) {
+      case 0:
+        value = null;
+        break;
+      case -90:
+        value = null;
+        break;
+      case 90:
+        value = 16;
+        break;
+      case 180:
+        value = 16;
+        break;
+      default:
+        value = null;
+    }
+    return value;
+  }
+
+  double? get rotatedBottom {
+    double? value;
+    switch (_orientation) {
+      case 0:
+        value = 20;
+        break;
+      case -90:
+        value = null;
+        break;
+      case 90:
+        value = 20;
+        break;
+      case 180:
+        value = null;
+        break;
+      default:
+        value = null;
+    }
+    return value;
+  }
+
+  double? get rotatedTop {
+    double? value;
+    switch (_orientation) {
+      case 0:
+        value = null;
+        break;
+      case -90:
+        value = 20;
+        break;
+      case 90:
+        value = null;
+        break;
+      case 180:
+        value = 20;
+        break;
+      default:
+        value = null;
+    }
+    return value;
   }
 }
