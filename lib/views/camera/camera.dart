@@ -42,7 +42,7 @@ class _CameraPageState extends State<CameraPage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? controller;
   XFile? imageFile;
-  bool enableAudio = true;
+  bool enableAudio = false;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -59,12 +59,15 @@ class _CameraPageState extends State<CameraPage>
       const EventChannel("com.oseasy.emp_mobile/event_channel");
   StreamSubscription? _streamSubscription;
   int _orientation = 0;
+  int _cameraIndex = 0;
+  bool _openFlash = false;
 
   @override
   void initState() {
     super.initState();
+    debugPrint("initState: ${_cameras.length}");
     WidgetsBinding.instance.addObserver(this);
-    _initializeCameraController(_cameras[0]);
+    _initializeCameraController(_cameras[_cameraIndex]);
     _enableEventReceiver();
   }
 
@@ -125,50 +128,97 @@ class _CameraPageState extends State<CameraPage>
       body: Container(
         color: Colors.black,
         child: SafeArea(
-            child: Column(
-          children: <Widget>[
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      "取消",
-                      style: TextStyle(fontSize: 20),
-                    )),
-                const SizedBox(
-                  height: 64,
-                )
-              ],
-            ),
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Center(
-                  child: _repaintBoundaryView(),
+          child: Column(
+            children: <Widget>[
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        "取消",
+                        style: TextStyle(fontSize: 20),
+                      )),
+                  const Expanded(
+                      child: SizedBox(
+                    height: 64,
+                  )),
+                  IconButton(
+                      color: Colors.blue,
+                      iconSize: 24,
+                      onPressed: () {
+                        setState(() {
+                          _openFlash = !_openFlash;
+                        });
+                      },
+                      icon: _openFlash
+                          ? const Icon(
+                              IconFonts.openFlash,
+                            )
+                          : const Icon(
+                              IconFonts.closeFlash,
+                            )),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  IconButton(
+                      color: Colors.blue,
+                      iconSize: 24,
+                      onPressed: () {
+                        if (_cameraIndex == 0) {
+                          _cameraIndex = 1;
+                        } else {
+                          _cameraIndex = 0;
+                        }
+                        onNewCameraSelected(_cameras[_cameraIndex]);
+                      },
+                      icon: const Icon(
+                        IconFonts.transformCamera,
+                      )),
+                ],
+              ),
+              Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.height - 240,
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Center(
+                    child: _repaintBoundaryView(),
+                  ),
                 ),
               ),
-            ),
-            _captureControlRowWidget(),
-          ],
-        )),
+              _captureControlRowWidget(),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _repaintBoundaryView() {
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double cameraHeight = MediaQuery.of(context).size.height - 240;
+    double cameraWidth = deviceWidth;
+    if (controller != null && controller!.value.isInitialized) {
+      cameraWidth = 1 / controller!.value.aspectRatio * cameraHeight;
+    }
+
     return RepaintBoundary(
       key: _cameraKey,
       child: Stack(
         children: [
-          AspectRatio(
-            aspectRatio: 2 / 3,
-            child: _cameraPreviewWidget(),
+          ClipRect(
+            child: Center(
+              child: Transform.scale(
+                scale: deviceWidth / cameraWidth,
+                child: _cameraPreviewWidget(),
+              ),
+            ),
           ),
+          // _cameraPreviewWidget(),
           _charactorView()
         ],
       ),
@@ -254,8 +304,6 @@ class _CameraPageState extends State<CameraPage>
   }
 
   Widget _captureControlRowWidget() {
-    final CameraController? cameraController = controller;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       // crossAxisAlignment: CrossAxisAlignment.center,
@@ -266,10 +314,9 @@ class _CameraPageState extends State<CameraPage>
             IconFonts.takePicture,
           ),
           color: Colors.blue,
-          onPressed:
-              cameraController != null && cameraController.value.isInitialized
-                  ? onTakePictureButtonPressed
-                  : null,
+          onPressed: controller != null && controller!.value.isInitialized
+              ? onPausePreviewButtonPressed //onTakePictureButtonPressed
+              : null,
         ),
       ],
     );
@@ -400,9 +447,14 @@ class _CameraPageState extends State<CameraPage>
     // } else {
     //   await cameraController.pausePreview();
     // }
+    if (_openFlash) {
+      await cameraController.setFlashMode(FlashMode.torch);
+    }
     await cameraController.pausePreview();
-    _confirm();
-
+    await _confirm();
+    if (_openFlash) {
+      cameraController.setFlashMode(FlashMode.off);
+    }
     if (mounted) {
       setState(() {});
     }
@@ -435,7 +487,7 @@ class _CameraPageState extends State<CameraPage>
   }
 
   /// 确认, 返回图片路径
-  void _confirm() async {
+  Future<void> _confirm() async {
     // if (_takeStatus == TakeStatus.taking) return;
     try {
       RenderRepaintBoundary boundary = _cameraKey.currentContext
@@ -454,7 +506,7 @@ class _CameraPageState extends State<CameraPage>
           File('$basePath/${DateTime.now().millisecondsSinceEpoch}.jpg');
       debugPrint("file path: ${file.path}");
       final originalImage = img.decodeImage(imgBytes!);
-      var newImg = img.copyRotate(originalImage!, angle: -90);
+      var newImg = img.copyRotate(originalImage!, angle: _orientation);
       file.writeAsBytesSync(img.encodeJpg(newImg));
     } catch (e) {
       debugPrint("e=====$e");
@@ -566,5 +618,19 @@ class _CameraPageState extends State<CameraPage>
         value = null;
     }
     return value;
+  }
+}
+
+class _MediaSizeClipper extends CustomClipper<Rect> {
+  final Size mediaSize;
+  const _MediaSizeClipper(this.mediaSize);
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTWH(0, 0, mediaSize.width, mediaSize.height - 240);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) {
+    return true;
   }
 }
