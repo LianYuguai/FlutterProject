@@ -3,7 +3,9 @@
    <application
         android:label="易办公"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:label"
+        xmlns:tools="http://schemas.android.com/tools">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,6 +22,13 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- 请填写你自己的- appKey -->
+            <meta-data android:name="com.alibaba.app.appkey" android:value="333887979"/>
+            <!-- 请填写你自己的appSecret -->
+            <meta-data android:name="com.alibaba.app.appsecret" android:value="7940eef71d594449943e44d092166fbc
+"/>
+            <!-- 华为通道的参数appid -->
+            <meta-data android:name="com.huawei.hms.client.appid" android:value="appid=108812181" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -33,6 +42,19 @@
        <meta-data
            android:name="com.baidu.lbsapi.API_KEY"
            android:value="d9RauTInKFitP0Ac8Q4PFluFBlAbCFDr" />
+       <receiver
+           android:name="com.oseasy.tools.MyMessageReceiver"
+           android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
+           <intent-filter>
+               <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+           </intent-filter>
+           <intent-filter>
+               <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+           </intent-filter>
+           <intent-filter>
+               <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+           </intent-filter>
+       </receiver>
     </application>
     <!--读写文件权限-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

@@ -32,6 +32,10 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+//    ndk {
+//        //选择要添加的对应cpu类型的.so库。此处仅为示意，推送支持所有主流类型，请根据设备硬件选择
+//        abiFilters 'armeabi', 'x86'
+//    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -40,6 +44,20 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    packagingOptions {
+        //解决第三方so依赖冲突 merge（合并）  pickFirst（选取第一个）
+        //如果合并不能解决问题就选择其中一个
+//        merge 'META-INF/proguard/androidx-annotations.pro'
+//        merge 'META-INF/proguard/coroutines.pro'
+//        merge 'lib/arm64-v8a/libc++_shared.so'
+//        merge 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+
     }
 
     sourceSets {
@@ -106,4 +124,7 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.aliyun.ams:alicloud-android-push:3.1.3'
 }
+
+apply plugin: 'com.aliyun.ams.emas-services'

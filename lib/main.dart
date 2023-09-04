@@ -1,9 +1,80 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import './views/home.dart';
 import 'router/routers.dart';
+import 'package:aliyun_push/aliyun_push.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  String appKey;
+  String appSecret;
+  if (Platform.isIOS) {
+    appKey = "填写自己iOS项目的appKey";
+    appSecret = "填写自己iOS项目的appSecret";
+  } else {
+    appKey = "";
+    appSecret = "";
+  }
+
+  AliyunPush _aliyunPush = AliyunPush();
+
+  _aliyunPush.initPush(appKey: appKey, appSecret: appSecret).then((initResult) {
+    var code = initResult['code'];
+    if (code == kAliyunPushSuccessCode) {
+      debugPrint('Init Aliyun Push successfully');
+    } else {
+      String errorMsg = initResult['errorMsg'];
+      debugPrint('Aliyun Push init failed, errorMsg is: $errorMsg');
+    }
+  });
+  _aliyunPush.addMessageReceiver(
+    onNotification: (message) {
+      debugPrint("onNotification: ${message.toString()}");
+      return Future.value(true);
+    },
+    onMessage: (message) {
+      debugPrint("onMessage: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onNotificationOpened: (message) {
+      debugPrint("onNotificationOpened: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onNotificationRemoved: (message) {
+      debugPrint("onNotificationRemoved: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onAndroidNotificationReceivedInApp: (message) {
+      debugPrint("onAndroidNotificationReceivedInApp: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onAndroidNotificationClickedWithNoAction: (message) {
+      debugPrint(
+          "onAndroidNotificationClickedWithNoAction: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onIOSChannelOpened: (message) {
+      debugPrint("onIOSChannelOpened: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onIOSRegisterDeviceTokenSuccess: (message) {
+      debugPrint("onIOSRegisterDeviceTokenSuccess: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+    onIOSRegisterDeviceTokenFailed: (message) {
+      debugPrint("onIOSRegisterDeviceTokenFailed: ${message.toString()}");
+      ;
+      return Future.value(true);
+    },
+  );
 
   runApp(const MyApp());
 }

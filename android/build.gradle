@@ -3,9 +3,19 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/repositories/releases/'
+            name 'aliyun'//一定要添加这个配置
+            allowInsecureProtocol = true
+        }
+        // 配置HMS Core SDK的Maven仓地址。
+        maven {
+            url 'https://developer.huawei.com/repo/'
+        }
     }
 
     dependencies {
+        classpath 'com.aliyun.ams:emas-services:1.0.4'
         classpath 'com.android.tools.build:gradle:7.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -13,6 +23,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/repositories/releases/'
+        }
         google()
         mavenCentral()
     }
