@@ -1,0 +1,6 @@
+framework module HMSLocation {
+  umbrella header "HMSLocation.h"
+
+  export *
+  module * { export * }
+}

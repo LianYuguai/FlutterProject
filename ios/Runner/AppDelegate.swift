@@ -11,6 +11,7 @@ import Flutter
       let _controller : FlutterViewController = window?.rootViewController as! FlutterViewController
       
       ScreenOrientationPlugin.shareInstance().register(withRegistry:  _controller.binaryMessenger)
+      LocationPlugin.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

@@ -5,7 +5,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         tools:replace="android:label"
-        xmlns:tools="http://schemas.android.com/tools">
+       android:usesCleartextTraffic="true"
+       xmlns:tools="http://schemas.android.com/tools">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,8 +28,6 @@
             <!-- 请填写你自己的appSecret -->
             <meta-data android:name="com.alibaba.app.appsecret" android:value="7940eef71d594449943e44d092166fbc
 "/>
-            <!-- 华为通道的参数appid -->
-            <meta-data android:name="com.huawei.hms.client.appid" android:value="appid=108812181" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -36,6 +35,9 @@
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+
+       <!-- 华为通道的参数appid -->
+       <meta-data android:name="com.huawei.hms.client.appid" android:value="appid=108812181" />
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
@@ -55,7 +57,11 @@
                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
            </intent-filter>
        </receiver>
-    </application>
+       <service
+           android:name="com.huawei.location.service.BackGroundService"
+           android:foregroundServiceType="location" />
+
+   </application>
     <!--读写文件权限-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -78,8 +84,15 @@
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
     <!--允许写设备缓存，用于问题排查-->
 <!--    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>-->
-    <!--允许写入扩展存储，用于写入缓存定位数据-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--允许读设备等信息，用于问题排查-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<!--    定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 </manifest>

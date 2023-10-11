@@ -1,10 +1,26 @@
 PODS:
+  - AlicloudPush (2.0.2):
+    - AlicloudSender
+    - AlicloudUT
+    - AlicloudUtils
+  - AlicloudSender (1.0.0.3):
+    - AlicloudUTDID
+    - EMASRest
+  - AlicloudUT (5.2.0.16):
+    - AlicloudUTDID
+  - AlicloudUTDID (1.5.0.94)
+  - AlicloudUtils (1.4.1):
+    - AlicloudUTDID
+  - aliyun_push (0.0.1):
+    - AlicloudPush
+    - Flutter
   - BaiduMapKit/Base (6.5.5)
   - BaiduMapKit/Utils (6.5.5):
     - BaiduMapKit/Base
   - BMKLocationKit (2.0.8)
   - camera_avfoundation (0.0.1):
     - Flutter
+  - EMASRest (11.1.1.2)
   - Flutter (1.0.0)
   - flutter_baidu_mapapi_base (3.4.1):
     - BaiduMapKit/Utils (= 6.5.5)
@@ -27,6 +43,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - aliyun_push (from `.symlinks/plugins/aliyun_push/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - Flutter (from `Flutter`)
   - flutter_baidu_mapapi_base (from `.symlinks/plugins/flutter_baidu_mapapi_base/ios`)
@@ -38,12 +55,21 @@ DEPENDENCIES:
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
 
 SPEC REPOS:
+  https://github.com/aliyun/aliyun-specs.git:
+    - AlicloudPush
+    - AlicloudSender
+    - AlicloudUT
+    - AlicloudUTDID
+    - AlicloudUtils
+    - EMASRest
   trunk:
     - BaiduMapKit
     - BMKLocationKit
     - Toast
 
 EXTERNAL SOURCES:
+  aliyun_push:
+    :path: ".symlinks/plugins/aliyun_push/ios"
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   Flutter:
@@ -64,9 +90,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_player_avfoundation/ios"
 
 SPEC CHECKSUMS:
+  AlicloudPush: 5f7bd16ebb2e499cfdb4a56adb272418327c64c5
+  AlicloudSender: 1f468b6bd962a099ffc19d45e3608b0fe98f259d
+  AlicloudUT: 6d1cf30d57d096b7e9bb4b069dd0ba6ad59a3338
+  AlicloudUTDID: 7323c443dcdf9a73e2224dc6ce51703671d7a765
+  AlicloudUtils: 873a76615bebcee8b1996f20820d366e433c3eab
+  aliyun_push: e92c2a8ca91b134bfabf7631816cce5f36e04a44
   BaiduMapKit: 3b79c1d77521fddfebfd62a5ab4663740bee5784
   BMKLocationKit: 193b4096ee5122a3df766e2832801587607d34e6
   camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
+  EMASRest: 8df6f87836767a9415ad5cc4af739bc9d215b475
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_baidu_mapapi_base: 4f9256710144738294f83d249a14e24334f208bd
   flutter_bmflocation: dabfc2e2b5463fd63cb50e824363a34d50a4551f
@@ -77,6 +110,6 @@ SPEC CHECKSUMS:
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: 394c50c17bb47293b34b443e1fa1c08955078985
 
 COCOAPODS: 1.12.1

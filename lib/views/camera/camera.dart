@@ -15,6 +15,7 @@ import 'package:my_app02/config/application.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../util/save_album_util.dart';
 import '../../utils/icon.dart';
 import 'dart:ui' as ui;
 
@@ -502,12 +503,13 @@ class _CameraPageState extends State<CameraPage>
           ? await getExternalStorageDirectory()
           : await getTemporaryDirectory();
       String? basePath = directory?.path;
-      File file =
-          File('$basePath/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      String path = '$basePath/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      File file = File(path);
       debugPrint("file path: ${file.path}");
       final originalImage = img.decodeImage(imgBytes!);
       var newImg = img.copyRotate(originalImage!, angle: _orientation);
       file.writeAsBytesSync(img.encodeJpg(newImg));
+      SaveToAlbumUtil.saveLocalImage(path);
     } catch (e) {
       debugPrint("e=====$e");
     }

@@ -1,6 +1,7 @@
 package com.oseasy.tools;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
@@ -23,6 +24,7 @@ public class MyMessageReceiver extends MessageReceiver {
 
     @Override
     protected void onNotificationOpened(Context context, String s, String s1, String s2) {
+        Toast.makeText(context, s, Toast.LENGTH_LONG).show();
         Log.e("MyMessageReceiver", "onNotificationOpened, title: " + s + ", summary: " + s1 + ", extraMap:" + s2);
     }
 

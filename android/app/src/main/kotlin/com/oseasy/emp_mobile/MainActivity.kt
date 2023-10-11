@@ -1,14 +1,14 @@
 package com.oseasy.emp_mobile
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
-import android.view.OrientationEventListener
+import android.widget.Toast
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.EventChannel.EventSink
-import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
+import io.flutter.plugins.LocationPlugin
 import io.flutter.plugins.ScreenOrientationPlugin
 
 
@@ -27,46 +27,39 @@ class MainActivity: FlutterActivity(){
 //                moveTaskToBack(false)
 //            }
         };
+
     ScreenOrientationPlugin.registerWith(flutterEngine,this);
-    /**
-        var channel =  EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVNET_CHANNEL)
-        channel.setStreamHandler(object : StreamHandler{
-            override fun onListen(arguments: Any?, events: EventSink?) {
-                eventSink = events;
-                Log.d("EventChannel", "EventChannel onListen called")
-            }
-
-            override fun onCancel(arguments: Any?) {
-                Log.d("EventChannel", "EventChannel onCancel called")
-            }
-
-        })
-        mScreenOrientationEventListener = object : OrientationEventListener(this) {
-            override fun onOrientationChanged(i: Int) {
-                var orientation: Int = 0
-                if (45 <= i && i < 135) {
-                    orientation = 90
-                } else if (135 <= i && i < 225) {
-                    orientation = 180
-                } else if (225 <= i && i < 315) {
-                    orientation = -90
-                } else {
-                    orientation = 0
-                }
-                if(mScreenExifOrientation == orientation){
-                    return
-                }
-                mScreenExifOrientation = orientation;
-                Log.i("orientation", mScreenExifOrientation.toString());
-                eventSink?.success(orientation);
-            }
-        }
-        mScreenOrientationEventListener?.enable();*/
-
+    LocationPlugin.registerWith(flutterEngine, this);
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         super.cleanUpFlutterEngine(flutterEngine);
         ScreenOrientationPlugin.disable();
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        var title: String? = intent.getStringExtra("title")
+        var summary: String? = intent.getStringExtra("summary")
+        var extra = intent.extras;
+//        Toast.makeText(context, "$title: $summary", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, extra.toString(), Toast.LENGTH_LONG).show();
+        Log.e("测试", extra.toString())
+        handleIntent();
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent();
+    }
+
+    fun handleIntent() {
+        if (intent != null) {
+            val value1 = intent.getStringExtra("key1")
+            val value2 = intent.getStringExtra("key2")
+            Log.e("测试", "" + value1)
+            Log.e("测试", "" + value2)
+        }
+    }
+
 }
